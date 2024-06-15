@@ -23,7 +23,7 @@
 
 typedef struct I2S_Config
 {
-	SPI_TypeDef *I2S_Port;
+	SPI_TypeDef *Port;
 
 	GPIO_TypeDef *LR_Pin_Port;
 	uint8_t LR_Pin_Number;
@@ -33,6 +33,8 @@ typedef struct I2S_Config
 	uint8_t Data_Length;
 
 	uint8_t Channel_Length;
+
+	uint8_t Audio_Frequency;
 
 
 	struct Full_Duplex
