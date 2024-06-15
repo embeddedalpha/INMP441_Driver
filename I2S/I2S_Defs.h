@@ -106,96 +106,120 @@ static const struct I2S_Mode
 		};
 
 
-static const struct I2S_MCK_Pin
+
+static const struct I2S_Pin
 {
-	const struct{
-		uint8_t Disable;
-		uint8_t PC7;
-	}I2S2;
+	/*****************************************************************************************/
+	const struct
+	{
+		const struct
+		{
+			uint8_t Disable;
+			uint8_t PC7;
+		}I2S2;
 
-	const struct{
-		uint8_t Disable;
-		uint8_t PC6;
-	}I2S3;
+		const struct{
+			uint8_t Disable;
+			uint8_t PC6;
+		}I2S3;
 
-}I2S_MCK_Pin = {
+	}MCK;
+	/*****************************************************************************************/
+	const struct SCK
+	{
+		const struct{
 
-		.I2S2 = {
-				.Disable = 0xFF,
-				.PC7 = 37,
+			uint8_t PB10;
+			uint8_t PB13;
+		}I2S2;
+
+	}SCK;
+	/*****************************************************************************************/
+	const struct WS
+	{
+		const struct{
+
+			uint8_t PB12;
+			uint8_t PB09;
+		}I2S2;
+
+	}WS;
+	/*****************************************************************************************/
+	const struct SD
+	{
+		const struct{
+
+			uint8_t PC03;
+			uint8_t PB15;
+		}I2S2;
+
+	}SD;
+	/*****************************************************************************************/
+	const struct EXT_SD
+	{
+		const struct{
+
+			uint8_t PC02;
+			uint8_t PB14;
+		}I2S2;
+
+	}EXT_SD;
+
+
+}I2S_Pin = {
+
+		/*****************************************************************************************/
+		.MCK =
+		{
+				.I2S2 = {
+						.Disable = 0xFF,
+						.PC7 = 37,
+				},
+
+				.I2S3 = {
+						.Disable = 0xFF,
+						.PC6 = 36,
+				},
+		},
+		/*****************************************************************************************/
+		.SCK = {
+
+				.I2S2 = {
+						.PB10 = 210,
+						.PB13 = 213,
+				},
+		},
+		/*****************************************************************************************/
+		.WS = {
+
+				.I2S2 = {
+						.PB12 = 212,
+						.PB09 = 209,
+				},
+		},
+		/*****************************************************************************************/
+		.SD = {
+
+				.I2S2 = {
+						.PC03 = 223,
+						.PB15 = 213,
+				},
+		},
+		/*****************************************************************************************/
+		.EXT_SD = {
+
+				.I2S2 = {
+						.PC02 = 202,
+						.PB14 = 214,
+				},
 		},
 
-		.I2S3 = {
-				.Disable = 0xFF,
-				.PC6 = 36,
-		},
 };
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-static const struct I2S_SCK_Pin
-{
-	const struct{
-
-		uint8_t PB10;
-		uint8_t PB13;
-	}I2S2;
-
-}I2S_SCK_Pin = {
-
-		.I2S2 = {
-				.PB10 = 210,
-				.PB13 = 213,
-		},
-};
 
 
-static const struct I2S_WS_Pin
-{
-	const struct{
-
-		uint8_t PB12;
-		uint8_t PB09;
-	}I2S2;
-
-}I2S_WS_Pin = {
-
-		.I2S2 = {
-				.PB12 = 212,
-				.PB09 = 209,
-		},
-};
-
-static const struct I2S_SD_Pin
-{
-	const struct{
-
-		uint8_t PC03;
-		uint8_t PB15;
-	}I2S2;
-
-}I2S_SD_Pin = {
-
-		.I2S2 = {
-				.PC03 = 223,
-				.PB15 = 213,
-		},
-};
-
-static const struct I2S_ext_SD_Pin
-{
-	const struct{
-
-		uint8_t PC02;
-		uint8_t PB14;
-	}I2S2;
-
-}I2S_ext_SD_Pin = {
-
-		.I2S2 = {
-				.PC02 = 202,
-				.PB14 = 214,
-		},
-};
 
 
 
