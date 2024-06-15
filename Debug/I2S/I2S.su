@@ -1,1 +1,6 @@
-../I2S/I2S.c:21:8:I2S_Init	40	static
+../I2S/I2S.c:18:15:SCK_PIN_INIT2	40	static
+../I2S/I2S.c:32:15:WS_PIN_INIT2	40	static
+../I2S/I2S.c:46:15:SD_PIN_Init2	40	static
+../I2S/I2S.c:60:15:MCK_PIN_Init2	40	static
+../I2S/I2S.c:74:15:EXT_SD_PIN_Init2	40	static
+../I2S/I2S.c:91:8:I2S_Init	16	static
