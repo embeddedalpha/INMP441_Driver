@@ -90,7 +90,7 @@ static int8_t EXT_SD_PIN_Init2(I2S_Config *config)
 
 int8_t I2S_Init(I2S_Config *config)
 {
-	if(config->I2S_Port == I2S_Config_Port.I2S2)
+	if(config->Port == I2S_Port.I2S2)
 	{
 		RCC->APB1ENR |= RCC_APB1ENR_SPI2EN;
 
@@ -104,61 +104,61 @@ int8_t I2S_Init(I2S_Config *config)
 
 
 
-	}else if(config->I2S_Port == I2S_Config_Port.I2S3)
+	}else if(config->Port == I2S_Port.I2S3)
 	{
 
 	}else{
 
 	}
 
-	config->I2S_Port->I2SCFGR |= 1 << 11;
+	config->Port->I2SCFGR |= 1 << 11;
 
 
 	// I2S Mode
 	if(config->Full_Duplex.mode == I2S_Mode.Master.Transmit){
-		config->I2S_Port->I2SCFGR |= 2 << 8;
+		config->Port->I2SCFGR |= 2 << 8;
 	}else if(config->Full_Duplex.mode == I2S_Mode.Master.Receive){
-		config->I2S_Port->I2SCFGR |= 3 << 8;
+		config->Port->I2SCFGR |= 3 << 8;
 	}else if(config->Full_Duplex.mode == I2S_Mode.Slave.Transmit){
-		config->I2S_Port->I2SCFGR &= ~(3 << 8);
+		config->Port->I2SCFGR &= ~(3 << 8);
 	}else if(config->Full_Duplex.mode == I2S_Mode.Slave.Receive){
-		config->I2S_Port->I2SCFGR |= (1 << 8);
+		config->Port->I2SCFGR |= (1 << 8);
 	}
 
 	// Standard
 	if(config->Standard == I2S_Standard.I2S_Philips){
-		config->I2S_Port->I2SCFGR &= ~(3 << 4);
+		config->Port->I2SCFGR &= ~(3 << 4);
 	}else if(config->Standard == I2S_Standard.Left_Justified){
-		config->I2S_Port->I2SCFGR |= (1 << 4);
+		config->Port->I2SCFGR |= (1 << 4);
 	}else if(config->Standard == I2S_Standard.Right_Justified){
-		config->I2S_Port->I2SCFGR |= (2 << 4);
+		config->Port->I2SCFGR |= (2 << 4);
 	}else if(config->Standard == I2S_Standard.PCM){
-		config->I2S_Port->I2SCFGR |= (3 << 4);
+		config->Port->I2SCFGR |= (3 << 4);
 	}else{
 		config->Error.Standard_Error = 1;
 	}
 
 	if(config->Data_Length == I2S_Data_Length._16_bit){
-		config->I2S_Port->I2SCFGR &= ~(3<<1);
+		config->Port->I2SCFGR &= ~(3<<1);
 	}else if(config->Data_Length == I2S_Data_Length._24_bit){
-		config->I2S_Port->I2SCFGR |= (1<1);
+		config->Port->I2SCFGR |= (1<1);
 	}else if(config->Data_Length == I2S_Data_Length._32_bit){
-		config->I2S_Port->I2SCFGR |= (2<1);
+		config->Port->I2SCFGR |= (2<1);
 	}else{
 		config->Error.Data_Len_Error = 1;
 	}
 
 
 	if(config->Channel_Length == I2S_Channel_Length._16_bit){
-		config->I2S_Port->I2SCFGR &= ~(1<<0);
+		config->Port->I2SCFGR &= ~(1<<0);
 	}else if(config->Channel_Length == I2S_Channel_Length._16_bit){
-		config->I2S_Port->I2SCFGR =  (1<<0);
+		config->Port->I2SCFGR =  (1<<0);
 	}else{
 		config->Error.Channel_Length_Error = 1;
 	}
 
 	//  I2S Enable
-	config->I2S_Port->I2SCFGR |= 1 << 10;
+	config->Port->I2SCFGR |= 1 << 10;
 
 
 
