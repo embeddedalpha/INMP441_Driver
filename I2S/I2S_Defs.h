@@ -9,6 +9,31 @@
 #define I2S_DEFS_H_
 
 
+static const struct I2S_Audio_Frequency{
+
+	uint8_t _8000KHz;
+	uint8_t _16000Hz;
+	uint8_t _22050Hz;
+	uint8_t _32000Hz;
+	uint8_t _44100Hz;
+	uint8_t _48000Hz;
+	uint8_t _64000Hz;
+	uint8_t _96000Hz;
+	uint8_t _192000Hz;
+	uint8_t _384000Hz;
+
+}I2S_Audio_Frequency = {
+		._8000KHz = 1,
+		._16000Hz = 2,
+		._22050Hz = 3,
+		._32000Hz = 4,
+		._44100Hz = 5,
+		._48000Hz = 6,
+		._64000Hz = 7,
+		._96000Hz = 8,
+		._192000Hz = 9,
+		._384000Hz = 10,
+};
 
 static const struct I2S_Standard{
 
@@ -49,12 +74,12 @@ static const struct I2S_Channel_Length{
 
 
 
-static const struct I2S_Config_Port{
+static const struct I2S_Port{
 
 	SPI_TypeDef *I2S2;
 	SPI_TypeDef *I2S3;
 
-}I2S_Config_Port = {SPI2,SPI3};
+}I2S_Port = {SPI2,SPI3};
 
 
 static const struct I2S_Mode
