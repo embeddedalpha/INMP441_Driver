@@ -37,13 +37,13 @@ static const struct I2S_Audio_Frequency{
 
 static const struct I2S_Standard{
 
-	int8_t I2S_Philips;
+	int8_t Standard_Philips;
 	int8_t Left_Justified;
 	int8_t Right_Justified;
 	int8_t PCM;
 
 }I2S_Standard = {
-		.I2S_Philips = 1,
+		.Standard_Philips = 1,
 		.Left_Justified =2,
 		.Right_Justified = 3,
 		.PCM = 4,
