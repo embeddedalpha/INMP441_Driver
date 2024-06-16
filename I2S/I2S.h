@@ -12,6 +12,7 @@
 #include "GPIO.h"
 #include "DMA.h"
 #include "I2S_Defs.h"
+#include "Console.h"
 
 #define I2S_Console_Debug
 
@@ -29,11 +30,8 @@ typedef struct I2S_Config
 	uint8_t LR_Pin_Number;
 
 	uint8_t Standard;
-
 	uint8_t Data_Length;
-
 	uint8_t Channel_Length;
-
 	uint8_t Audio_Frequency;
 
 
@@ -71,6 +69,7 @@ typedef struct I2S_Config
 		bool Data_Len_Error;
 		bool Standard_Error;
 		bool Channel_Length_Error;
+		bool Audio_Frequency_Error;
 	}Error;
 
 
@@ -80,6 +79,7 @@ typedef struct I2S_Config
 
 
 int8_t I2S_Init(I2S_Config *config);
+void I2S_Print_Errors(I2S_Config *config);
 
 
 #endif /* I2S_H_ */
