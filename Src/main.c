@@ -30,22 +30,24 @@ int main(void)
 
 	INMP441_I2S.Port = I2S_Port.I2S2;
 	INMP441_I2S.Audio_Frequency = I2S_Audio_Frequency._48000Hz;
+	INMP441_I2S.Channel_Length = I2S_Channel_Length._16_bit;
+	INMP441_I2S.Data_Length = I2S_Data_Length._16_bit;
+	INMP441_I2S.LR_Pin_Port = GPIOB;
+	INMP441_I2S.LR_Pin_Number = 12;
+	INMP441_I2S.Standard = I2S_Standard.Standard_Philips;
+	INMP441_I2S.Half_Duplex.Enable = true;
+	INMP441_I2S.Half_Duplex.mode = I2S_Mode.Master.Receive;
+	INMP441_I2S.Half_Duplex.WS_Pin = I2S_Pin.WS.I2S2.PB09;
+	INMP441_I2S.Half_Duplex.SD_Pin = I2S_Pin.SD.I2S2.PB15;
+	INMP441_I2S.Half_Duplex.SCK_Pin = I2S_Pin.SCK.I2S2.PB13;
 
-	INMP441_I2S.Full_Duplex.Enable = true;
-	INMP441_I2S.Full_Duplex.mode = I2S_Mode.Master.Transmit;
-	INMP441_I2S.Full_Duplex.MCK_Pin = I2S_MCK_Pin.I2S2.Disable;
-	INMP441_I2S.Full_Duplex.EXT_SD = I2S_ext_SD_Pin.I2S2.PC02;
-	INMP441_I2S.Full_Duplex.SCK_Pin = I2S_SCK_Pin.I2S2.PB10;
-
-	I2S_Init(&INMP441_I2S);
-
-
-
-
-
-
+	if(I2S_Init(&INMP441_I2S)) I2S_Print_Errors(&INMP441_I2S);
 
 
-    /* Loop forever */
-	for(;;);
+
+
+	for(;;)
+	{
+
+	}
 }
