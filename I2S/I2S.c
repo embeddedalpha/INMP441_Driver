@@ -15,10 +15,45 @@
  *
  */
 
-DMA_Config I2S2_DMA_FD;
-DMA_Config I2S3_DMA_FD;
-DMA_Config I2S2_DMA_HD;
-DMA_Config I2S3_DMA_HD;
+struct I2S2_DMA_Full_Duplex
+{
+		struct Receiver{
+			DMA_Config RX;
+			DMA_Config TX;
+		}Receiver;
+
+		struct Transmitter{
+			DMA_Config RX;
+			DMA_Config TX;
+		}Transmitter;
+
+}I2S2_DMA_Full_Duplex;
+
+struct I2S2_DMA_Half_Duplex
+{
+	DMA_Config RX;
+	DMA_Config TX;
+
+}I2S2_DMA_Half_Duplex;
+
+struct I2S3_DMA_Full_Duplex
+{
+	DMA_Config Master_TX;
+	DMA_Config Master_RX;
+	DMA_Config Slave_TX;
+	DMA_Config Slave_RX;
+}I2S3_DMA_Full_Duplex;
+
+struct I2S3_DMA_Half_Duplex
+{
+	DMA_Config Master_TX;
+	DMA_Config Master_RX;
+	DMA_Config Slave_TX;
+	DMA_Config Slave_RX;
+}I2S3_DMA_Half_Duplex;
+
+
+
 
 static int8_t SCK_PIN_INIT2(I2S_Config *config)
 {
@@ -93,6 +128,7 @@ static int8_t EXT_SD_PIN_Init2(I2S_Config *config)
 
 
 
+/********************************************************************************************************/
 int8_t I2S_Init(I2S_Config *config)
 {
 	if(config->Port == I2S_Port.I2S2)
@@ -110,6 +146,8 @@ int8_t I2S_Init(I2S_Config *config)
 		{
 
 		}
+
+
 
 
 
@@ -254,11 +292,14 @@ int8_t I2S_Init(I2S_Config *config)
 	//  I2S Enable
 	config->Port->I2SCFGR |= 1 << 10;
 
+
+	I2S_Mode_Set(config);
+
 	return 1;
 
 }
-
-
+/********************************************************************************************************/
+/********************************************************************************************************/
 void I2S_Print_Errors(I2S_Config *config)
 {
 	if(config->Error.Audio_Frequency_Error) printConsole("Audio_Frequency_Error \r\n");
@@ -273,16 +314,24 @@ void I2S_Print_Errors(I2S_Config *config)
 	if(config->Error.Standard_Error) printConsole("Standard_Error \r\n");
 	if(config->Error.WS_Pin_Error) printConsole("WS_Pin_Error \r\n");
 }
-
+/********************************************************************************************************/
+void I2S_Start(I2S_Config *config)
+{
+	config -> Port -> I2SCFGR |= SPI_I2SCFGR_I2SE;
+}
+/********************************************************************************************************/
+void I2S_Stop(I2S_Config *config)
+{
+	config -> Port -> I2SCFGR &= ~SPI_I2SCFGR_I2SMOD;
+}
+/********************************************************************************************************/
 void I2S_Read_Left_Data(I2S_Config *config, void *data, uint16_t len)
 {
 	if(config->Port == I2S_Port.I2S2)
 	{
 		if(config->Full_Duplex.Enable == ENABLE)
 		{
-			I2S2_DMA_FD.buffer_length = len;
-			I2S2_DMA_FD.memory_address = (uint32_t)&data;
-			I2S2_DMA_FD.peripheral_address = (config->Port->DR);
+
 
 
 
@@ -291,3 +340,212 @@ void I2S_Read_Left_Data(I2S_Config *config, void *data, uint16_t len)
 
 
 }
+/********************************************************************************************************/
+int8_t I2S_Mode_Set(I2S_Config *config)
+{
+	int8_t retval = 0;
+	if(config->Port == I2S_Port.I2S2)
+	{
+		if(config->Full_Duplex.Enable == ENABLE)
+		{
+			if((config->Full_Duplex.mode == I2S_Mode.Master.Receive) || config->Full_Duplex.mode == I2S_Mode.Slave.Receive)
+			{
+				I2S2_DMA_Full_Duplex.Receiver.RX.channel = 0;
+				I2S2_DMA_Full_Duplex.Receiver.RX.stream = DMA1_Stream3;
+				I2S2_DMA_Full_Duplex.Receiver.RX.circular_mode = DMA_Circular_Mode.Disable;
+				I2S2_DMA_Full_Duplex.Receiver.RX.controller = DMA1;
+				I2S2_DMA_Full_Duplex.Receiver.RX.flow_control = DMA_Flow_Control.DMA_Control;
+				I2S2_DMA_Full_Duplex.Receiver.RX.interrupts = DMA_Interrupts.Half_Transfer_Complete | DMA_Interrupts.Transfer_Complete;
+				if(config->Data_Length == I2S_Data_Length._16_bit)
+				{
+					I2S2_DMA_Full_Duplex.Receiver.RX.memory_data_size = DMA_Memory_Data_Size.half_word;
+					I2S2_DMA_Full_Duplex.Receiver.RX.peripheral_data_size = DMA_Peripheral_Data_Size.half_word;
+				}
+				else if((config->Data_Length == I2S_Data_Length._24_bit) || (config->Data_Length == I2S_Data_Length._32_bit))
+				{
+					I2S2_DMA_Full_Duplex.Receiver.RX.memory_data_size = DMA_Memory_Data_Size.word;
+					I2S2_DMA_Full_Duplex.Receiver.RX.peripheral_data_size = DMA_Peripheral_Data_Size.word;
+				}
+				I2S2_DMA_Full_Duplex.Receiver.RX.peripheral_pointer_increment = DMA_Peripheral_Pointer_Incremet.Disable;
+				I2S2_DMA_Full_Duplex.Receiver.RX.memory_pointer_increment = DMA_Memory_Pointer_Incremet.Enable;
+				I2S2_DMA_Full_Duplex.Receiver.RX.transfer_direction = DMA_Transfer_Direction.Peripheral_to_memory;
+
+				DMA_Init(&I2S2_DMA_Full_Duplex.Receiver.RX);
+
+/*$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$*/
+
+				I2S2_DMA_Full_Duplex.Receiver.TX.channel = 2;
+				I2S2_DMA_Full_Duplex.Receiver.TX.stream = DMA1_Stream4;
+				I2S2_DMA_Full_Duplex.Receiver.TX.circular_mode = DMA_Circular_Mode.Disable;
+				I2S2_DMA_Full_Duplex.Receiver.TX.controller = DMA1;
+				I2S2_DMA_Full_Duplex.Receiver.TX.flow_control = DMA_Flow_Control.DMA_Control;
+				I2S2_DMA_Full_Duplex.Receiver.TX.interrupts = DMA_Interrupts.Half_Transfer_Complete | DMA_Interrupts.Transfer_Complete;
+				if(config->Data_Length == I2S_Data_Length._16_bit)
+				{
+					I2S2_DMA_Full_Duplex.Receiver.TX.memory_data_size = DMA_Memory_Data_Size.half_word;
+					I2S2_DMA_Full_Duplex.Receiver.TX.peripheral_data_size = DMA_Peripheral_Data_Size.half_word;
+				}
+				else if((config->Data_Length == I2S_Data_Length._24_bit) || (config->Data_Length == I2S_Data_Length._32_bit))
+				{
+					I2S2_DMA_Full_Duplex.Receiver.TX.memory_data_size = DMA_Memory_Data_Size.word;
+					I2S2_DMA_Full_Duplex.Receiver.TX.peripheral_data_size = DMA_Peripheral_Data_Size.word;
+				}
+				I2S2_DMA_Full_Duplex.Receiver.TX.peripheral_pointer_increment = DMA_Peripheral_Pointer_Incremet.Disable;
+				I2S2_DMA_Full_Duplex.Receiver.TX.memory_pointer_increment = DMA_Memory_Pointer_Incremet.Enable;
+				I2S2_DMA_Full_Duplex.Receiver.TX.transfer_direction = DMA_Transfer_Direction.Memory_to_peripheral;
+				DMA_Init(&I2S2_DMA_Full_Duplex.Receiver.TX);
+			}
+
+/*$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$*/
+/*$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$*/
+
+			else if((config->Full_Duplex.mode == I2S_Mode.Master.Transmit) || config->Full_Duplex.mode == I2S_Mode.Slave.Transmit)
+			{
+				I2S2_DMA_Full_Duplex.Transmitter.RX.channel = 0;
+				I2S2_DMA_Full_Duplex.Transmitter.RX.stream = DMA1_Stream4;
+				I2S2_DMA_Full_Duplex.Transmitter.RX.circular_mode = DMA_Circular_Mode.Disable;
+				I2S2_DMA_Full_Duplex.Transmitter.RX.controller = DMA1;
+				I2S2_DMA_Full_Duplex.Transmitter.RX.flow_control = DMA_Flow_Control.DMA_Control;
+				I2S2_DMA_Full_Duplex.Transmitter.RX.interrupts = DMA_Interrupts.Half_Transfer_Complete | DMA_Interrupts.Transfer_Complete;
+				if(config->Data_Length == I2S_Data_Length._16_bit)
+				{
+					I2S2_DMA_Full_Duplex.Transmitter.RX.memory_data_size = DMA_Memory_Data_Size.half_word;
+					I2S2_DMA_Full_Duplex.Transmitter.RX.peripheral_data_size = DMA_Peripheral_Data_Size.half_word;
+				}
+				else if((config->Data_Length == I2S_Data_Length._24_bit) || (config->Data_Length == I2S_Data_Length._32_bit))
+				{
+					I2S2_DMA_Full_Duplex.Transmitter.RX.memory_data_size = DMA_Memory_Data_Size.word;
+					I2S2_DMA_Full_Duplex.Transmitter.RX.peripheral_data_size = DMA_Peripheral_Data_Size.word;
+				}
+				I2S2_DMA_Full_Duplex.Transmitter.RX.peripheral_pointer_increment = DMA_Peripheral_Pointer_Incremet.Disable;
+				I2S2_DMA_Full_Duplex.Transmitter.RX.memory_pointer_increment = DMA_Memory_Pointer_Incremet.Enable;
+				I2S2_DMA_Full_Duplex.Transmitter.RX.transfer_direction = DMA_Transfer_Direction.Peripheral_to_memory;
+
+				DMA_Init(&I2S2_DMA_Full_Duplex.Transmitter.RX);
+
+/*$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$*/
+
+				I2S2_DMA_Full_Duplex.Transmitter.TX.channel = 2;
+				I2S2_DMA_Full_Duplex.Transmitter.TX.stream = DMA1_Stream3;
+				I2S2_DMA_Full_Duplex.Transmitter.TX.circular_mode = DMA_Circular_Mode.Disable;
+				I2S2_DMA_Full_Duplex.Transmitter.TX.controller = DMA1;
+				I2S2_DMA_Full_Duplex.Transmitter.TX.flow_control = DMA_Flow_Control.DMA_Control;
+				I2S2_DMA_Full_Duplex.Transmitter.TX.interrupts = DMA_Interrupts.Half_Transfer_Complete | DMA_Interrupts.Transfer_Complete;
+				if(config->Data_Length == I2S_Data_Length._16_bit)
+				{
+					I2S2_DMA_Full_Duplex.Transmitter.TX.memory_data_size = DMA_Memory_Data_Size.half_word;
+					I2S2_DMA_Full_Duplex.Transmitter.TX.peripheral_data_size = DMA_Peripheral_Data_Size.half_word;
+				}
+				else if((config->Data_Length == I2S_Data_Length._24_bit) || (config->Data_Length == I2S_Data_Length._32_bit))
+				{
+					I2S2_DMA_Full_Duplex.Transmitter.TX.memory_data_size = DMA_Memory_Data_Size.word;
+					I2S2_DMA_Full_Duplex.Transmitter.TX.peripheral_data_size = DMA_Peripheral_Data_Size.word;
+				}
+				I2S2_DMA_Full_Duplex.Transmitter.TX.peripheral_pointer_increment = DMA_Peripheral_Pointer_Incremet.Disable;
+				I2S2_DMA_Full_Duplex.Transmitter.TX.memory_pointer_increment = DMA_Memory_Pointer_Incremet.Enable;
+				I2S2_DMA_Full_Duplex.Transmitter.TX.transfer_direction = DMA_Transfer_Direction.Memory_to_peripheral;
+				DMA_Init(&I2S2_DMA_Full_Duplex.Transmitter.TX);
+			}
+
+
+
+		}
+		if(config->Half_Duplex.Enable == ENABLE)
+		{
+			if((config->Half_Duplex.mode == I2S_Mode.Master.Receive) || config->Half_Duplex.mode == I2S_Mode.Slave.Receive)
+			{
+				I2S2_DMA_Half_Duplex.RX.channel = 0;
+				I2S2_DMA_Half_Duplex.RX.stream = DMA1_Stream3;
+				I2S2_DMA_Half_Duplex.RX.circular_mode = DMA_Circular_Mode.Disable;
+				I2S2_DMA_Half_Duplex.RX.controller = DMA1;
+				I2S2_DMA_Half_Duplex.RX.flow_control = DMA_Flow_Control.DMA_Control;
+				I2S2_DMA_Half_Duplex.RX.interrupts = DMA_Interrupts.Half_Transfer_Complete | DMA_Interrupts.Transfer_Complete;
+				if(config->Data_Length == I2S_Data_Length._16_bit)
+				{
+					I2S2_DMA_Half_Duplex.RX.memory_data_size = DMA_Memory_Data_Size.half_word;
+					I2S2_DMA_Half_Duplex.RX.peripheral_data_size = DMA_Peripheral_Data_Size.half_word;
+				}
+				else if((config->Data_Length == I2S_Data_Length._24_bit) || (config->Data_Length == I2S_Data_Length._32_bit))
+				{
+					I2S2_DMA_Half_Duplex.RX.memory_data_size = DMA_Memory_Data_Size.word;
+					I2S2_DMA_Half_Duplex.RX.peripheral_data_size = DMA_Peripheral_Data_Size.word;
+				}
+				I2S2_DMA_Half_Duplex.RX.peripheral_pointer_increment = DMA_Peripheral_Pointer_Incremet.Disable;
+				I2S2_DMA_Half_Duplex.RX.memory_pointer_increment = DMA_Memory_Pointer_Incremet.Enable;
+				I2S2_DMA_Half_Duplex.RX.transfer_direction = DMA_Transfer_Direction.Peripheral_to_memory;
+
+				DMA_Init(&I2S2_DMA_Half_Duplex.RX);
+			}
+			else if((config->Half_Duplex.mode == I2S_Mode.Master.Transmit) || config->Half_Duplex.mode == I2S_Mode.Slave.Transmit)
+			{
+				I2S2_DMA_Half_Duplex.TX.channel = 0;
+				I2S2_DMA_Half_Duplex.TX.stream = DMA1_Stream4;
+				I2S2_DMA_Half_Duplex.TX.circular_mode = DMA_Circular_Mode.Disable;
+				I2S2_DMA_Half_Duplex.TX.controller = DMA1;
+				I2S2_DMA_Half_Duplex.TX.flow_control = DMA_Flow_Control.DMA_Control;
+				I2S2_DMA_Half_Duplex.TX.interrupts = DMA_Interrupts.Half_Transfer_Complete | DMA_Interrupts.Transfer_Complete;
+				if(config->Data_Length == I2S_Data_Length._16_bit)
+				{
+					I2S2_DMA_Half_Duplex.TX.memory_data_size = DMA_Memory_Data_Size.half_word;
+					I2S2_DMA_Half_Duplex.TX.peripheral_data_size = DMA_Peripheral_Data_Size.half_word;
+				}
+				else if((config->Data_Length == I2S_Data_Length._24_bit) || (config->Data_Length == I2S_Data_Length._32_bit))
+				{
+					I2S2_DMA_Half_Duplex.TX.memory_data_size = DMA_Memory_Data_Size.word;
+					I2S2_DMA_Half_Duplex.TX.peripheral_data_size = DMA_Peripheral_Data_Size.word;
+				}
+				I2S2_DMA_Half_Duplex.TX.peripheral_pointer_increment = DMA_Peripheral_Pointer_Incremet.Disable;
+				I2S2_DMA_Half_Duplex.TX.memory_pointer_increment = DMA_Memory_Pointer_Incremet.Enable;
+				I2S2_DMA_Half_Duplex.TX.transfer_direction = DMA_Transfer_Direction.Memory_to_peripheral;
+
+				DMA_Init(&I2S2_DMA_Half_Duplex.TX);
+			}
+
+		}
+	}
+/*$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$*/
+/*$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$*/
+/*$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$*/
+/*$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$*/
+	if(config->Port == I2S_Port.I2S3)
+	{
+
+	}
+	else
+	{
+		retval = -1;
+	}
+
+
+	return retval;
+}
+
+
+uint32_t I2S_Read_Data(I2S_Config *config)
+{
+	uint32_t retval = 0;
+	if(config->Channel_Length == I2S_Channel_Length._16_bit)
+	{
+		while(!(config -> Port -> SR & SPI_SR_CHSIDE)){}
+		retval =   (config -> Port -> DR);
+	}
+	else if(config->Channel_Length == I2S_Channel_Length._32_bit)
+	{
+		while(!(config -> Port -> SR & SPI_SR_CHSIDE)){}
+		retval =   ((config -> Port -> DR) << 16) | ((config -> Port -> DR));
+	}
+
+	return retval;
+}
+
+void I2S_Select_Left_Channel(I2S_Config *config)
+{
+	GPIO_Pin_High(config->LR_Pin_Port, config->LR_Pin_Number);
+}
+void I2S_Select_Right_Channel(I2S_Config *config)
+{
+	GPIO_Pin_Low(config->LR_Pin_Port, config->LR_Pin_Number);
+}
+
+
+int8_t I2S_Write_Data(I2S_Config *config, void *data, int len);
