@@ -81,5 +81,17 @@ typedef struct I2S_Config
 int8_t I2S_Init(I2S_Config *config);
 void I2S_Print_Errors(I2S_Config *config);
 
+int8_t I2S_Mode_Set(I2S_Config *config);
+
+void I2S_Start(I2S_Config *config);
+void I2S_Stop(I2S_Config *config);
+
+void I2S_Select_Left_Channel(I2S_Config *config);
+void I2S_Select_Right_Channel(I2S_Config *config);
+
+
+uint32_t I2S_Read_Data(I2S_Config *config);
+int8_t I2S_Write_Data(I2S_Config *config, void *data, int len);
+
 
 #endif /* I2S_H_ */
