@@ -28,12 +28,12 @@ typedef struct I2S_Config
 	SPI_TypeDef *Port; ///< SPI port for I2S.
 
 	GPIO_TypeDef *LR_Pin_Port; ///< GPIO port for LR pin.
-	uint8_t LR_Pin_Number; ///< LR pin number.
+	int8_t LR_Pin_Number; ///< LR pin number.
 
-	uint8_t Standard; ///< I2S standard.
-	uint8_t Data_Length; ///< Data length for I2S.
-	uint8_t Channel_Length; ///< Channel length for I2S.
-	uint8_t Audio_Frequency; ///< Audio frequency for I2S.
+	int8_t Standard; ///< I2S standard.
+	int8_t Data_Length; ///< Data length for I2S.
+	int8_t Channel_Length; ///< Channel length for I2S.
+	int8_t Audio_Frequency; ///< Audio frequency for I2S.
 
 	/**
 	 * @struct Full_Duplex
@@ -42,12 +42,12 @@ typedef struct I2S_Config
 	struct Full_Duplex
 	{
 		bool Enable; ///< Enable full duplex mode.
-		uint8_t mode; ///< Full duplex mode.
-		uint8_t MCK_Pin; ///< MCK pin for full duplex mode.
-		uint8_t SCK_Pin; ///< SCK pin for full duplex mode.
-		uint8_t SD_Pin; ///< SD pin for full duplex mode.
-		uint8_t WS_Pin; ///< WS pin for full duplex mode.
-		uint8_t EXT_SD; ///< External SD for full duplex mode.
+		int8_t mode; ///< Full duplex mode.
+		int8_t MCK_Pin; ///< MCK pin for full duplex mode.
+		int8_t SCK_Pin; ///< SCK pin for full duplex mode.
+		int8_t SD_Pin; ///< SD pin for full duplex mode.
+		int8_t WS_Pin; ///< WS pin for full duplex mode.
+		int8_t EXT_SD; ///< External SD for full duplex mode.
 	}Full_Duplex;
 
 	/**
@@ -57,11 +57,11 @@ typedef struct I2S_Config
 	struct Half_Duplex
 	{
 		bool Enable; ///< Enable half duplex mode.
-		uint8_t mode; ///< Half duplex mode.
-		uint8_t MCK_Pin; ///< MCK pin for half duplex mode.
-		uint8_t SCK_Pin; ///< SCK pin for half duplex mode.
-		uint8_t SD_Pin; ///< SD pin for half duplex mode.
-		uint8_t WS_Pin; ///< WS pin for half duplex mode.
+		int8_t mode; ///< Half duplex mode.
+		int8_t MCK_Pin; ///< MCK pin for half duplex mode.
+		int8_t SCK_Pin; ///< SCK pin for half duplex mode.
+		int8_t SD_Pin; ///< SD pin for half duplex mode.
+		int8_t WS_Pin; ///< WS pin for half duplex mode.
 	}Half_Duplex;
 
 	/**
@@ -85,6 +85,7 @@ typedef struct I2S_Config
 
 }I2S_Config;
 
+void I2S_DeInit(I2S_Config *config); ///< Function for de-initializing I2S.
 int8_t I2S_Init(I2S_Config *config); ///< Function for initializing I2S.
 void I2S_Print_Errors(I2S_Config *config); ///< Function for printing I2S errors.
 
