@@ -21,6 +21,7 @@
 #include "I2S.h"
 
 
+
 I2S_Config INMP441_I2S;
 
 int main(void)
@@ -46,8 +47,15 @@ int main(void)
 
 
 
+	uint32_t x = 0;
+
+
 	for(;;)
 	{
+
+		x = I2S_Read_Data(&INMP441_I2S);
+		printConsole("%"PRId32"\r\n",x);
+
 
 	}
 }
