@@ -46,12 +46,13 @@ int main(void)
 
 
 
-
+	I2S_Select_Left_Channel(&INMP441_I2S);
 	uint32_t x = 0;
 
 
 	for(;;)
 	{
+
 
 		x = I2S_Read_Data(&INMP441_I2S);
 		printConsole("%"PRId32"\r\n",x);

@@ -12,3 +12,4 @@
 ../I2S/I2S.c:524:10:I2S_Read_Data	24	static
 ../I2S/I2S.c:541:6:I2S_Select_Left_Channel	16	static
 ../I2S/I2S.c:545:6:I2S_Select_Right_Channel	16	static
+../I2S/I2S.c:551:6:I2S_Write_Data	24	static
