@@ -11,7 +11,7 @@
 
 static const struct I2S_Audio_Frequency{
 
-	uint8_t _8000KHz;
+	uint8_t _8000Hz;
 	uint8_t _16000Hz;
 	uint8_t _22050Hz;
 	uint8_t _32000Hz;
@@ -23,7 +23,7 @@ static const struct I2S_Audio_Frequency{
 	uint8_t _384000Hz;
 
 }I2S_Audio_Frequency = {
-		._8000KHz = 1,
+		._8000Hz = 1,
 		._16000Hz = 2,
 		._22050Hz = 3,
 		._32000Hz = 4,
