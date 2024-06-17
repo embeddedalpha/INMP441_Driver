@@ -127,6 +127,110 @@ static int8_t EXT_SD_PIN_Init2(I2S_Config *config)
 }
 
 
+static int8_t SCK_PIN_INIT3(I2S_Config *config)
+{
+	if(config->Full_Duplex.SCK_Pin == I2S_Pin.SCK.I2S2.PB10){
+		GPIO_Pin_Init(GPIOB, 10, MODE.Alternate_Function, Output_Type.Push_Pull, Speed.Very_High_Speed, Pull.No_Pull_Up_Down, Alternate_Functions.I2S_2EXT);
+	}
+	else if(config->Full_Duplex.SCK_Pin == I2S_Pin.SCK.I2S2.PB13){
+		GPIO_Pin_Init(GPIOB, 13, MODE.Alternate_Function, Output_Type.Push_Pull, Speed.Very_High_Speed, Pull.No_Pull_Up_Down, Alternate_Functions.I2S_2EXT);
+	}
+	else{
+		config->Error.SCK_Pin_Error = true;
+		return -1;
+	}
+	return 1;
+}
+static int8_t WS_PIN_INIT3(I2S_Config *config)
+{
+	if(config->Full_Duplex.WS_Pin == I2S_Pin.WS.I2S2.PB09){
+		GPIO_Pin_Init(GPIOB, 9, MODE.Alternate_Function, Output_Type.Push_Pull, Speed.Very_High_Speed, Pull.No_Pull_Up_Down, Alternate_Functions.I2S_2EXT);
+	}
+	else if(config->Full_Duplex.WS_Pin == I2S_Pin.WS.I2S2.PB12){
+		GPIO_Pin_Init(GPIOB, 12, MODE.Alternate_Function, Output_Type.Push_Pull, Speed.Very_High_Speed, Pull.No_Pull_Up_Down, Alternate_Functions.I2S_2EXT);
+	}
+	else{
+		config->Error.WS_Pin_Error = true;
+		return -1;
+	}
+	return 1;
+}
+static int8_t SD_PIN_Init3(I2S_Config *config)
+{
+	if(config->Full_Duplex.SD_Pin == I2S_Pin.SD.I2S2.PB15){
+		GPIO_Pin_Init(GPIOB, 15, MODE.Alternate_Function, Output_Type.Push_Pull, Speed.Very_High_Speed, Pull.No_Pull_Up_Down, Alternate_Functions.I2S_2EXT);
+	}
+	else if(config->Full_Duplex.SD_Pin == I2S_Pin.SD.I2S2.PC03){
+		GPIO_Pin_Init(GPIOC, 3, MODE.Alternate_Function, Output_Type.Push_Pull, Speed.Very_High_Speed, Pull.No_Pull_Up_Down, Alternate_Functions.I2S_2EXT);
+	}
+	else{
+		config->Error.SD_Pin_Error = true;
+		return -1;
+	}
+	return 1;
+}
+static int8_t MCK_PIN_Init3(I2S_Config *config)
+{
+	if(config->Full_Duplex.MCK_Pin != I2S_Pin.MCK.I2S2.Disable)
+	{
+		if((config->Full_Duplex.MCK_Pin == I2S_Pin.MCK.I2S2.PC7)){
+			GPIO_Pin_Init(GPIOC, 7, MODE.Alternate_Function, Output_Type.Push_Pull, Speed.Very_High_Speed, Pull.No_Pull_Up_Down, Alternate_Functions.I2S_2);
+		}
+		else{
+			config->Error.MCK_PIN_Error = true;
+			return -1;
+		}
+	}
+	return 1;
+}
+static int8_t EXT_SD_PIN_Init3(I2S_Config *config)
+{
+	if(config->Full_Duplex.EXT_SD == I2S_Pin.EXT_SD.I2S2.PB14){
+		GPIO_Pin_Init(GPIOB, 14, MODE.Alternate_Function, Output_Type.Push_Pull, Speed.Very_High_Speed, Pull.No_Pull_Up_Down, Alternate_Functions.I2S_2EXT);
+	}
+	else if(config->Full_Duplex.EXT_SD == I2S_Pin.EXT_SD.I2S2.PC02){
+		GPIO_Pin_Init(GPIOC, 2, MODE.Alternate_Function, Output_Type.Push_Pull, Speed.Very_High_Speed, Pull.No_Pull_Up_Down, Alternate_Functions.I2S_2EXT);
+	}
+	else{
+		config->Error.Ext_SD_Pin_Error = true;
+		return -1;
+	}
+	return 1;
+}
+
+
+/********************************************************************************************************/
+void I2S_DeInit(I2S_Config *config)
+{
+	if(config->Port != NULL)
+	{
+		RCC->APB1ENR &= ~(RCC_APB1ENR_SPI2EN | RCC_APB1ENR_SPI3EN);
+	}
+	config->Port->I2SCFGR &= ~0xFFFF;
+	config->Port->I2SPR &= ~0xFFFF;
+	config->Audio_Frequency = -1;
+	config->Channel_Length = -1;
+	config->Data_Length = -1;
+	config->LR_Pin_Number = -1;
+
+	config->Standard = -1;
+	config->Full_Duplex.EXT_SD = -1;
+	config->Full_Duplex.MCK_Pin = -1;
+	config->Full_Duplex.SCK_Pin = -1;
+	config->Full_Duplex.SD_Pin = -1;
+	config->Full_Duplex.WS_Pin = -1;
+	config->Full_Duplex.mode = -1;
+	config->Full_Duplex.Enable = 0;
+	config->Half_Duplex.MCK_Pin = -1;
+	config->Half_Duplex.SCK_Pin = -1;
+	config->Half_Duplex.SD_Pin = -1;
+	config->Half_Duplex.WS_Pin = -1;
+	config->Half_Duplex.mode = -1;
+	config->Half_Duplex.Enable = 0;
+	config->LR_Pin_Port = NULL;
+	I2S_Start(config);
+	config->Port = NULL;
+}
 
 /********************************************************************************************************/
 int8_t I2S_Init(I2S_Config *config)
@@ -135,76 +239,92 @@ int8_t I2S_Init(I2S_Config *config)
 	{
 		RCC->APB1ENR |= RCC_APB1ENR_SPI2EN;
 
-		SD_PIN_Init2(config);
-		WS_PIN_INIT2(config);
-		SCK_PIN_INIT2(config);
-		MCK_PIN_Init2(config);
-		if(config->Full_Duplex.Enable == true){
+		if((config->Half_Duplex.Enable == true) || (config->Full_Duplex.Enable == true))
+		{
+			SD_PIN_Init2(config);
+			WS_PIN_INIT2(config);
+			SCK_PIN_INIT2(config);
+			MCK_PIN_Init2(config);
+		}
+		else if(config->Full_Duplex.Enable == true)
+		{
 			EXT_SD_PIN_Init2(config);
 		}
-		else if(config->Half_Duplex.Enable == true)
-		{
-
-		}
-
-
-
-
-
-	}else if(config->Port == I2S_Port.I2S3)
+	}
+	else if(config->Port == I2S_Port.I2S3)
 	{
-		RCC->APB1ENR |= RCC_APB1ENR_SPI2EN;
+		RCC->APB1ENR |= RCC_APB1ENR_SPI3EN;
 
-	}else{
+		if((config->Half_Duplex.Enable == true) || (config->Full_Duplex.Enable == true))
+		{
+			SD_PIN_Init3(config);
+			WS_PIN_INIT3(config);
+			SCK_PIN_INIT3(config);
+			MCK_PIN_Init3(config);
+		}
+		else if(config->Full_Duplex.Enable == true)
+		{
+			EXT_SD_PIN_Init3(config);
+		}
+	}
+	else
+	{
 
 		config->Error.Port_Error = true;
-
 	}
 
 
 
-	config->Port->I2SCFGR |= 1 << 11;
+	config->Port->I2SCFGR &= ~SPI_I2SCFGR_I2SMOD;
+	config->Port->I2SCFGR |= SPI_I2SCFGR_I2SMOD;
+
+	I2S_Stop(config);
 
 
 	// I2S Mode
+	config->Port->I2SCFGR &= ~SPI_I2SCFGR_I2SCFG;
 	if(config->Full_Duplex.mode == I2S_Mode.Master.Transmit){
-		config->Port->I2SCFGR |= 2 << 8;
+		config->Port->I2SCFGR |= SPI_I2SCFGR_I2SCFG_1;
 	}else if(config->Full_Duplex.mode == I2S_Mode.Master.Receive){
-		config->Port->I2SCFGR |= 3 << 8;
+		config->Port->I2SCFGR |= SPI_I2SCFGR_I2SCFG;
 	}else if(config->Full_Duplex.mode == I2S_Mode.Slave.Transmit){
-		config->Port->I2SCFGR &= ~(3 << 8);
+		config->Port->I2SCFGR &= ~SPI_I2SCFGR_I2SCFG;
 	}else if(config->Full_Duplex.mode == I2S_Mode.Slave.Receive){
-		config->Port->I2SCFGR |= (1 << 8);
+		config->Port->I2SCFGR |= SPI_I2SCFGR_I2SCFG_0;
 	}
 
 	// Standard
+	config->Port->I2SCFGR &= ~SPI_I2SCFGR_I2SSTD;
 	if(config->Standard == I2S_Standard.Standard_Philips){
-		config->Port->I2SCFGR &= ~(3 << 4);
+		config->Port->I2SCFGR &= ~(SPI_I2SCFGR_I2SSTD);
 	}else if(config->Standard == I2S_Standard.Left_Justified){
-		config->Port->I2SCFGR |= (1 << 4);
+		config->Port->I2SCFGR |= SPI_I2SCFGR_I2SSTD_0;
 	}else if(config->Standard == I2S_Standard.Right_Justified){
-		config->Port->I2SCFGR |= (2 << 4);
+		config->Port->I2SCFGR |= SPI_I2SCFGR_I2SSTD_1;
 	}else if(config->Standard == I2S_Standard.PCM){
-		config->Port->I2SCFGR |= (3 << 4);
+		config->Port->I2SCFGR |= SPI_I2SCFGR_I2SSTD;
 	}else{
 		config->Error.Standard_Error  = true;
 	}
 
+	// Data Length
+	config->Port->I2SCFGR &= ~SPI_I2SCFGR_DATLEN;
 	if(config->Data_Length == I2S_Data_Length._16_bit){
-		config->Port->I2SCFGR &= ~(3<<1);
+		config->Port->I2SCFGR &= ~SPI_I2SCFGR_DATLEN;
 	}else if(config->Data_Length == I2S_Data_Length._24_bit){
-		config->Port->I2SCFGR |= (1<1);
+		config->Port->I2SCFGR |= SPI_I2SCFGR_DATLEN_0;
 	}else if(config->Data_Length == I2S_Data_Length._32_bit){
-		config->Port->I2SCFGR |= (2<1);
+		config->Port->I2SCFGR |= SPI_I2SCFGR_DATLEN_1;
 	}else{
 		config->Error.Data_Len_Error = true;
 	}
 
 
+	config->Port->I2SCFGR &= ~SPI_I2SCFGR_CHLEN;
 	if(config->Channel_Length == I2S_Channel_Length._16_bit){
-		config->Port->I2SCFGR &= ~(1<<0);
-	}else if(config->Channel_Length == I2S_Channel_Length._16_bit){
-		config->Port->I2SCFGR =  (1<<0);
+		config->Port->I2SCFGR &= ~SPI_I2SCFGR_CHLEN;
+	}else if(config->Channel_Length == I2S_Channel_Length._32_bit){
+		config->Port->I2SCFGR |=  SPI_I2SCFGR_CHLEN;
 	}else{
 		config->Error.Channel_Length_Error = true;
 	}
@@ -212,7 +332,7 @@ int8_t I2S_Init(I2S_Config *config)
 
 	int plli2s_n = 128;
 	int plli2s_r = 5;
-	if(config->Audio_Frequency == I2S_Audio_Frequency._8000KHz)
+	if(config->Audio_Frequency == I2S_Audio_Frequency._8000Hz)
 	{
 		//
 		  plli2s_n = 64;
@@ -290,8 +410,7 @@ int8_t I2S_Init(I2S_Config *config)
 	}
 
 	//  I2S Enable
-	config->Port->I2SCFGR |= 1 << 10;
-
+	I2S_Start(config);
 
 	I2S_Mode_Set(config);
 
@@ -322,7 +441,7 @@ void I2S_Start(I2S_Config *config)
 /********************************************************************************************************/
 void I2S_Stop(I2S_Config *config)
 {
-	config -> Port -> I2SCFGR &= ~SPI_I2SCFGR_I2SMOD;
+	config -> Port -> I2SCFGR &= ~SPI_I2SCFGR_I2SE;
 }
 /********************************************************************************************************/
 void I2S_Read_Left_Data(I2S_Config *config, void *data, uint16_t len)
