@@ -91,7 +91,7 @@ void I2S_Select_Right_Channel(I2S_Config *config);
 
 
 uint32_t I2S_Read_Data(I2S_Config *config);
-int8_t I2S_Write_Data(I2S_Config *config, void *data, int len);
+void I2S_Write_Data(I2S_Config *config, uint32_t data, int len);
 
 
 #endif /* I2S_H_ */

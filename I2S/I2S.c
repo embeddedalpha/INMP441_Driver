@@ -548,4 +548,20 @@ void I2S_Select_Right_Channel(I2S_Config *config)
 }
 
 
-int8_t I2S_Write_Data(I2S_Config *config, void *data, int len);
+void I2S_Write_Data(I2S_Config *config, uint32_t data, int len)
+{
+	if(config->Channel_Length == I2S_Channel_Length._16_bit)
+	{
+		config -> Port -> DR = (0xFFFF & data);
+	}
+	else if(config->Channel_Length == I2S_Data_Length._24_bit)
+	{
+		config -> Port -> DR = (0x00FF0000 & data)>>16;
+		config -> Port -> DR = (0x0000FFFF & data);
+	}
+	else if(config->Channel_Length == I2S_Data_Length._24_bit)
+	{
+		config -> Port -> DR = (0xFFFF0000 & data)>>16;
+		config -> Port -> DR = (0x0000FFFF & data);
+	}
+}
