@@ -27,6 +27,11 @@ I2S_Config INMP441_I2S;
 int main(void)
 {
 	MCU_Clock_Setup();
+	Delay_Config();
+	Console_Init(USART1, 9600);
+
+
+	I2S_DeInit(&INMP441_I2S);
 
 
 	INMP441_I2S.Port = I2S_Port.I2S2;
