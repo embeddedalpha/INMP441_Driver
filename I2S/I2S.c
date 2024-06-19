@@ -355,6 +355,12 @@ int8_t I2S_Init(I2S_Config *config)
 	}else if(config->Audio_Frequency == I2S_Audio_Frequency._22050Hz)
 	{
 		//
+		 plli2s_n = 141;
+		 plli2s_r = 5;
+		RCC -> PLLI2SCFGR = (plli2s_n << 6) | (plli2s_r << 28);
+		RCC -> CR |= RCC_CR_PLLI2SON;
+		while(!(RCC -> CR & RCC_CR_PLLI2SRDY));
+		config->Port->I2SPR |= 40 | SPI_I2SPR_ODD;
 	}else if(config->Audio_Frequency == I2S_Audio_Frequency._32000Hz)
 	{
 		//
@@ -368,6 +374,12 @@ int8_t I2S_Init(I2S_Config *config)
 	}else if(config->Audio_Frequency == I2S_Audio_Frequency._44100Hz)
 	{
 		//
+		  plli2s_n = 50;
+		  plli2s_r = 6;
+		RCC -> PLLI2SCFGR = (plli2s_n << 6) | (plli2s_r << 28);
+		RCC -> CR |= RCC_CR_PLLI2SON;
+		while(!(RCC -> CR & RCC_CR_PLLI2SRDY));
+		config->Port->I2SPR |= 10 | SPI_I2SPR_ODD;
 	}else if(config->Audio_Frequency == I2S_Audio_Frequency._48000Hz)
 	{
 		//
@@ -396,7 +408,7 @@ int8_t I2S_Init(I2S_Config *config)
 		RCC -> PLLI2SCFGR = (plli2s_n << 6) | (plli2s_r << 28);
 		RCC -> CR |= RCC_CR_PLLI2SON;
 		while(!(RCC -> CR & RCC_CR_PLLI2SRDY));
-		config->Port->I2SPR |= 12;
+		config->Port->I2SPR |= 12 ;
 		//
 	}else if(config->Audio_Frequency == I2S_Audio_Frequency._192000Hz)
 	{
@@ -443,22 +455,7 @@ void I2S_Stop(I2S_Config *config)
 {
 	config -> Port -> I2SCFGR &= ~SPI_I2SCFGR_I2SE;
 }
-/********************************************************************************************************/
-void I2S_Read_Left_Data(I2S_Config *config, void *data, uint16_t len)
-{
-	if(config->Port == I2S_Port.I2S2)
-	{
-		if(config->Full_Duplex.Enable == ENABLE)
-		{
 
-
-
-
-		}
-	}
-
-
-}
 /********************************************************************************************************/
 int8_t I2S_Mode_Set(I2S_Config *config)
 {
