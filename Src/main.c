@@ -57,11 +57,7 @@ int main(void)
 
 	for(;;)
 	{
-
-
 		x = I2S_Read_Data(&INMP441_I2S);
 		printConsole("%"PRId32"\r\n",x);
-
-
 	}
 }
