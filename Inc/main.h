@@ -40,8 +40,13 @@ __STATIC_INLINE int32_t SystemAPB2_Clock_Speed(void)
 
 __STATIC_INLINE void MCU_Clock_Setup(void)
 {
-	uint8_t pll_m = 4;
-	uint8_t pll_n = 168; //192
+//	uint8_t pll_m = 4;
+//	uint8_t pll_n = 168; //192
+//	uint8_t pll_p = 0;
+//	uint8_t pll_q = 7;
+
+	uint8_t pll_m = 8;
+	uint16_t pll_n = 336; //192
 	uint8_t pll_p = 0;
 	uint8_t pll_q = 7;
 
