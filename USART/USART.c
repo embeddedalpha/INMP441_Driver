@@ -311,7 +311,17 @@ int8_t USART_Init(USART_Config *config)
 	USART_Clock_Enable(config);
 	PIN_Setup(config);
 
-	config->Port->BRR = SystemCoreClock/config->baudrate;
+//	USART1 -> CR1 |= USART_CR1_UE;
+
+	double brr = (168000000.0/ (16.0 * 2.0 * (double)(config->baudrate)));
+	double div_frac, mantissa;
+	separateFractionAndIntegral(brr, &div_frac, &mantissa);
+
+	int div_frac_1 = (int)(ceil(div_frac*16.0));
+	int mantissa_1 = (int)(ceil(mantissa));
+
+	config->Port-> CR1 |= USART_CR1_UE;
+	config->Port->BRR = (mantissa_1<<4)|(div_frac_1);
 	config->Port->CR1 |= config->parity; //Parity
 	config->Port->CR1 |= config->interrupt; //interrupt
 	config->Port->CR2 |= config->stop_bits;
@@ -320,16 +330,7 @@ int8_t USART_Init(USART_Config *config)
 	if(config->mode == USART_Mode.LIN) config -> Port -> CR2 |= USART_CR2_LINEN;
 
 
-
-
-
-
-
-
-
-
-
-
+	config->Port->CR1 |= USART_CR1_RE | USART_CR1_TE  ;
 
 	return 1;
 }
