@@ -144,6 +144,10 @@ __STATIC_INLINE float Time_Stamp_End(void)
 	return temp;
 }
 
+__STATIC_INLINE void separateFractionAndIntegral(double number, double *fractionalPart, double *integralPart) {
+    *integralPart = (double)((int64_t)number);
+    *fractionalPart = number - *integralPart;
+}
 
 
 

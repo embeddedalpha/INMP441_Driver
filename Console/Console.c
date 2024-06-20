@@ -11,16 +11,18 @@
 USART_Config serial;
 
 
- void Console_Init(USART_TypeDef *port,int baudrate)
+ void Console_Init(USART_TypeDef *port,int32_t baudrate)
 {
 	 USART_Config_Reset(&serial);
 	 serial.Port = USART1;
 	 serial.baudrate = baudrate;
 	 serial.mode = USART_Mode.Asynchronous;
 	 serial.stop_bits = Stop_Bits.Bit_1;
-	 serial.TX_Pin = USART1_TX_Pin.PA9;
-	 serial.RX_Pin = USART1_RX_Pin.PA10;
+	 serial.TX_Pin = USART1_TX_Pin.PB6;
+	 serial.RX_Pin = USART1_RX_Pin.PB7;
 	 USART_Init(&serial);
+
+
 }
 
  void printConsole(char *msg, ...)

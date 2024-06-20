@@ -5,10 +5,7 @@ I2S/I2S.o: ../I2S/I2S.c ../I2S/I2S.h ../Inc/main.h ../Inc/stm32f407xx.h \
  D:/STM32F407_Firmware/I2S_Driver/GPIO/GPIO_Defs.h \
  D:/STM32F407_Firmware/I2S_Driver/DMA/DMA.h \
  D:/STM32F407_Firmware/I2S_Driver/DMA/DMA_Defs_Stream.h \
- D:/STM32F407_Firmware/I2S_Driver/DMA/DMA_Defs_Config.h ../I2S/I2S_Defs.h \
- D:/STM32F407_Firmware/I2S_Driver/Console/Console.h \
- D:/STM32F407_Firmware/I2S_Driver/USART/USART.h \
- D:/STM32F407_Firmware/I2S_Driver/USART/USART_Defs.h
+ D:/STM32F407_Firmware/I2S_Driver/DMA/DMA_Defs_Config.h ../I2S/I2S_Defs.h
 ../I2S/I2S.h:
 ../Inc/main.h:
 ../Inc/stm32f407xx.h:
@@ -25,6 +22,3 @@ D:/STM32F407_Firmware/I2S_Driver/DMA/DMA.h:
 D:/STM32F407_Firmware/I2S_Driver/DMA/DMA_Defs_Stream.h:
 D:/STM32F407_Firmware/I2S_Driver/DMA/DMA_Defs_Config.h:
 ../I2S/I2S_Defs.h:
-D:/STM32F407_Firmware/I2S_Driver/Console/Console.h:
-D:/STM32F407_Firmware/I2S_Driver/USART/USART.h:
-D:/STM32F407_Firmware/I2S_Driver/USART/USART_Defs.h:
