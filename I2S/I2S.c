@@ -58,10 +58,10 @@ struct I2S3_DMA_Half_Duplex
 static int8_t SCK_PIN_INIT2(I2S_Config *config)
 {
 	if((config->Full_Duplex.SCK_Pin == I2S_Pin.SCK.I2S2.PB10) || (config->Half_Duplex.SCK_Pin == I2S_Pin.SCK.I2S2.PB10)){
-		GPIO_Pin_Init(GPIOB, 10, MODE.Alternate_Function, Output_Type.Push_Pull, Speed.Very_High_Speed, Pull.No_Pull_Up_Down, Alternate_Functions.I2S_2EXT);
+		GPIO_Pin_Init(GPIOB, 10, MODE.Alternate_Function, Output_Type.Push_Pull, Speed.Very_High_Speed, Pull.Pull_Down, Alternate_Functions.I2S_2EXT);
 	}
 	else if((config->Full_Duplex.SCK_Pin == I2S_Pin.SCK.I2S2.PB13) || (config->Half_Duplex.SCK_Pin == I2S_Pin.SCK.I2S2.PB13)){
-		GPIO_Pin_Init(GPIOB, 13, MODE.Alternate_Function, Output_Type.Push_Pull, Speed.Very_High_Speed, Pull.No_Pull_Up_Down, Alternate_Functions.I2S_2EXT);
+		GPIO_Pin_Init(GPIOB, 13, MODE.Alternate_Function, Output_Type.Push_Pull, Speed.Very_High_Speed, Pull.Pull_Down, Alternate_Functions.I2S_2EXT);
 	}
 	else{
 		config->Error.SCK_Pin_Error = true;
@@ -385,13 +385,13 @@ int8_t I2S_Init(I2S_Config *config)
 	}else if(config->Audio_Frequency == I2S_Audio_Frequency._48000Hz)
 	{
 		//
-		  plli2s_n = 384/2;
+		  plli2s_n = 307;
 		  plli2s_r = 5;
 		RCC -> PLLI2SCFGR = (plli2s_n << 6) | (plli2s_r << 28);
 		RCC -> CR |= RCC_CR_PLLI2SON;
 		while(!(RCC -> CR & RCC_CR_PLLI2SRDY));
-		config->Port->I2SPR = (12);
-		config->Port->I2SPR |= SPI_I2SPR_ODD;
+		config->Port->I2SPR = (10);
+//		config->Port->I2SPR |= SPI_I2SPR_ODD;
 		//
 	}else if(config->Audio_Frequency == I2S_Audio_Frequency._64000Hz)
 	{
@@ -642,13 +642,13 @@ int8_t I2S_Mode_Set(I2S_Config *config)
 }
 
 
-void I2S_Read_Data(I2S_Config *config, uint32_t *data)
+void I2S_Read_Data(I2S_Config *config, int32_t *data)
 {
-	uint32_t retval[2];
+	int32_t retval[2];
 	if(config->Data_Length == I2S_Data_Length._16_bit)
 	{
-		while((config -> Port -> SR & SPI_SR_CHSIDE) == SPI_SR_CHSIDE){}
-//		retval[0] = config -> Port -> DR;
+		while((config -> Port -> SR & SPI_SR_CHSIDE) != SPI_SR_CHSIDE){}
+		retval[0] = config -> Port -> DR;
 		retval[1] =   config -> Port -> DR;
 		*data =  ((retval[1] << 16) | retval[0]);
 	}
@@ -657,8 +657,10 @@ void I2S_Read_Data(I2S_Config *config, uint32_t *data)
 //		while(!(config -> Port -> SR & SPI_SR_CHSIDE)){}
 		while((config -> Port -> SR & SPI_SR_CHSIDE) == SPI_SR_CHSIDE){}
 		retval[0] = config -> Port -> DR;
-		retval[1] =   config -> Port -> DR;
-		*data =  ((retval[1] << 16) | retval[0]);
+//		while((config -> Port -> SR & SPI_SR_CHSIDE) == SPI_SR_CHSIDE){}
+//		retval[1] =   config -> Port -> DR;
+//		*data =  ((retval[0] << 16) | retval[1]);
+		*data = retval[0];
 	}
 }
 
