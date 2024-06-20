@@ -15,6 +15,6 @@
 ../I2S/I2S.c:459:6:I2S_Stop	16	static
 ../I2S/I2S.c:465:8:I2S_Mode_Set	24	static
 ../I2S/I2S.c:645:6:I2S_Read_Data	24	static
-../I2S/I2S.c:665:6:I2S_Select_Left_Channel	16	static
-../I2S/I2S.c:669:6:I2S_Select_Right_Channel	16	static
-../I2S/I2S.c:675:6:I2S_Write_Data	24	static
+../I2S/I2S.c:667:6:I2S_Select_Left_Channel	16	static
+../I2S/I2S.c:671:6:I2S_Select_Right_Channel	16	static
+../I2S/I2S.c:677:6:I2S_Write_Data	24	static

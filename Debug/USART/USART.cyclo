@@ -1,4 +1,4 @@
-../Inc/main.h:147:22:separateFractionAndIntegral	1
+../Inc/main.h:152:22:separateFractionAndIntegral	1
 ../USART/USART.c:14:6:USART_Config_Reset	1
 ../USART/USART.c:25:8:USART_Clock_Enable	13
 ../USART/USART.c:65:8:USART_Clock_Disable	13
