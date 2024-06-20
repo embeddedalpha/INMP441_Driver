@@ -80,6 +80,9 @@ static const struct I2S_Port{
 	SPI_TypeDef *I2S3;
 
 }I2S_Port = {SPI2,SPI3};
+//}I2S_Port = {I2S2ext,I2S3ext};
+
+//I2S2ext
 
 
 static const struct I2S_Mode
@@ -114,13 +117,13 @@ static const struct I2S_Pin
 	{
 		const struct
 		{
-			uint8_t Disable;
-			uint8_t PC7;
+			uint16_t Disable;
+			uint16_t PC7;
 		}I2S2;
 
 		const struct{
-			uint8_t Disable;
-			uint8_t PC6;
+			uint16_t Disable;
+			uint16_t PC6;
 		}I2S3;
 
 	}MCK;
@@ -129,8 +132,8 @@ static const struct I2S_Pin
 	{
 		const struct{
 
-			uint8_t PB10;
-			uint8_t PB13;
+			uint16_t PB10;
+			uint16_t PB13;
 		}I2S2;
 
 	}SCK;
@@ -139,8 +142,8 @@ static const struct I2S_Pin
 	{
 		const struct{
 
-			uint8_t PB12;
-			uint8_t PB09;
+			uint16_t PB12;
+			uint16_t PB09;
 		}I2S2;
 
 	}WS;
@@ -149,8 +152,8 @@ static const struct I2S_Pin
 	{
 		const struct{
 
-			uint8_t PC03;
-			uint8_t PB15;
+			uint16_t PC03;
+			uint16_t PB15;
 		}I2S2;
 
 	}SD;
@@ -159,8 +162,8 @@ static const struct I2S_Pin
 	{
 		const struct{
 
-			uint8_t PC02;
-			uint8_t PB14;
+			uint16_t PC02;
+			uint16_t PB14;
 		}I2S2;
 
 	}EXT_SD;
@@ -185,32 +188,32 @@ static const struct I2S_Pin
 		.SCK = {
 
 				.I2S2 = {
-						.PB10 = 210,
-						.PB13 = 213,
+						.PB10 = 21,
+						.PB13 = 24,
 				},
 		},
 		/*****************************************************************************************/
 		.WS = {
 
 				.I2S2 = {
-						.PB12 = 212,
-						.PB09 = 209,
+						.PB12 = 23,
+						.PB09 = 29,
 				},
 		},
 		/*****************************************************************************************/
 		.SD = {
 
 				.I2S2 = {
-						.PC03 = 223,
-						.PB15 = 213,
+						.PC03 = 25,
+						.PB15 = 22,
 				},
 		},
 		/*****************************************************************************************/
 		.EXT_SD = {
 
 				.I2S2 = {
-						.PC02 = 202,
-						.PB14 = 214,
+						.PC02 = 27,
+						.PB14 = 29,
 				},
 		},
 
