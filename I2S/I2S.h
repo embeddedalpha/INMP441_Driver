@@ -13,9 +13,9 @@
 #include "DMA.h"
 #include "I2S_Defs.h"
 
-#define I2S_Console_Debug ///< Macro for enabling console debug for I2S.
+#define I2S_Console_Debug 0 ///< Macro for enabling console debug for I2S.
 
-#ifdef I2S_Console_Debug
+#if I2S_Console_Debug
 	#include "Console.h" ///< Include Console header if I2S_Console_Debug is defined.
 #endif
 
@@ -97,7 +97,7 @@ void I2S_Stop(I2S_Config *config); ///< Function for stopping I2S.
 void I2S_Select_Left_Channel(I2S_Config *config); ///< Function for selecting left channel in I2S.
 void I2S_Select_Right_Channel(I2S_Config *config); ///< Function for selecting right channel in I2S.
 
-uint32_t I2S_Read_Data(I2S_Config *config); ///< Function for reading data from I2S.
+void I2S_Read_Data(I2S_Config *config, uint32_t *data); ///< Function for reading data from I2S.
 void I2S_Write_Data(I2S_Config *config, uint32_t data, int len); ///< Function for writing data to I2S.
 
 #endif /* I2S_H_ */
