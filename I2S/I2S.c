@@ -385,13 +385,29 @@ int8_t I2S_Init(I2S_Config *config)
 	}else if(config->Audio_Frequency == I2S_Audio_Frequency._48000Hz)
 	{
 		//
-		  plli2s_n = 307;
-		  plli2s_r = 5;
-		RCC -> PLLI2SCFGR = (plli2s_n << 6) | (plli2s_r << 28);
-		RCC -> CR |= RCC_CR_PLLI2SON;
-		while(!(RCC -> CR & RCC_CR_PLLI2SRDY));
-		config->Port->I2SPR = (10);
-//		config->Port->I2SPR |= SPI_I2SPR_ODD;
+
+		if(config->Channel_Length == I2S_Channel_Length._16_bit)
+		{
+			plli2s_n = 80;
+			plli2s_r = 4;
+			RCC -> PLLI2SCFGR = (plli2s_n << 6) | (plli2s_r << 28);
+			RCC -> CR |= RCC_CR_PLLI2SON;
+			while(!(RCC -> CR & RCC_CR_PLLI2SRDY));
+			config->Port->I2SPR = (13);
+//			config->Port->I2SPR |= SPI_I2SPR_ODD;
+		}
+		else if(config->Channel_Length == I2S_Channel_Length._32_bit)
+		{
+			plli2s_n = 80;
+			plli2s_r = 4;
+			RCC -> PLLI2SCFGR = (plli2s_n << 6) | (plli2s_r << 28);
+			RCC -> CR |= RCC_CR_PLLI2SON;
+			while(!(RCC -> CR & RCC_CR_PLLI2SRDY));
+			config->Port->I2SPR = (6);
+			config->Port->I2SPR |= SPI_I2SPR_ODD;
+		}
+
+
 		//
 	}else if(config->Audio_Frequency == I2S_Audio_Frequency._64000Hz)
 	{
