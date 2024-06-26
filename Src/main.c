@@ -28,8 +28,9 @@ I2S_Config INMP441_I2S;
 int main(void)
 {
 	MCU_Clock_Setup();
+	I2S_Clock_Init();
 	Delay_Config();
-	Console_Init(USART1, 230400);
+	Console_Init(USART1, 115200);
 
 
 	I2S_DeInit(&INMP441_I2S);
@@ -38,7 +39,7 @@ int main(void)
 	INMP441_I2S.Port = I2S_Port.I2S2;
 	INMP441_I2S.Audio_Frequency = I2S_Audio_Frequency._48000Hz;
 	INMP441_I2S.Channel_Length = I2S_Channel_Length._32_bit;
-	INMP441_I2S.Data_Length = I2S_Data_Length._24_bit;
+	INMP441_I2S.Data_Length = I2S_Data_Length._16_bit;
 	INMP441_I2S.LR_Pin_Port = GPIOB;
 	INMP441_I2S.LR_Pin_Number = 11;
 	INMP441_I2S.Standard = I2S_Standard.Standard_Philips;
@@ -54,14 +55,14 @@ int main(void)
 
 
 	I2S_Select_Left_Channel(&INMP441_I2S);
-	int32_t x = 0;
+	int16_t x = 0;
 
 	Delay_ms(200);
 
 
 	for(;;)
 	{
-		I2S_Read_Data(&INMP441_I2S,&x);
-//		printConsole("%"PRId32"\r\n",x);
+		x = I2S_Read_Data(&INMP441_I2S);
+		printConsole("%d\r\n",x);
 	}
 }

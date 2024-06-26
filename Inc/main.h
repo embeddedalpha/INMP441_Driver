@@ -61,7 +61,14 @@ __STATIC_INLINE void MCU_Clock_Setup(void)
 	RCC -> CFGR |= RCC_CFGR_HPRE_DIV1;
 	RCC -> CFGR |= RCC_CFGR_PPRE1_DIV4;
 	RCC -> CFGR |= RCC_CFGR_PPRE2_DIV2;
+
+
+
+
 	RCC -> CR |= RCC_CR_PLLON;
+
+
+
 	while(!(RCC->CR & RCC_CR_PLLRDY)){}
 	RCC -> CFGR |= RCC_CFGR_SW_PLL;
 	while((RCC -> CFGR & RCC_CFGR_SWS_PLL) != RCC_CFGR_SWS_PLL);
@@ -73,10 +80,19 @@ __STATIC_INLINE void MCU_Clock_Setup(void)
 
 __STATIC_INLINE int I2S_Clock_Init()
 {
-	int plli2s_m = 25; //25 25 4
-	int plli2s_n = 344; //344 192 50
-	int plli2s_r = 2; //2 5 2
-	RCC -> PLLI2SCFGR = (plli2s_m << 0) | (plli2s_n << 6) | (plli2s_r << 28);
+//	int plli2s_m = 25; //25 25 4
+//	int plli2s_n = 344; //344 192 50
+//	int plli2s_r = 2; //2 5 2
+//	RCC -> PLLI2SCFGR = (plli2s_m << 0) | (plli2s_n << 6) | (plli2s_r << 28);
+//	RCC -> CR |= RCC_CR_PLLI2SON;
+//	while(!(RCC -> CR & RCC_CR_PLLI2SRDY));
+
+	uint32_t RCC_PLLI2SCFGR = 0;
+	uint32_t plli2s_n = 384;
+	uint32_t plli2s_r = 5;
+	RCC_PLLI2SCFGR = plli2s_n << 6;
+	RCC_PLLI2SCFGR |= plli2s_r << 28;
+	RCC -> PLLI2SCFGR = RCC_PLLI2SCFGR;
 	RCC -> CR |= RCC_CR_PLLI2SON;
 	while(!(RCC -> CR & RCC_CR_PLLI2SRDY));
 	return (0UL);
