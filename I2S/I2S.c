@@ -58,10 +58,10 @@ struct I2S3_DMA_Half_Duplex
 static int8_t SCK_PIN_INIT2(I2S_Config *config)
 {
 	if((config->Full_Duplex.SCK_Pin == I2S_Pin.SCK.I2S2.PB10) || (config->Half_Duplex.SCK_Pin == I2S_Pin.SCK.I2S2.PB10)){
-		GPIO_Pin_Init(GPIOB, 10, MODE.Alternate_Function, Output_Type.Push_Pull, Speed.Very_High_Speed, Pull.Pull_Down, Alternate_Functions.I2S_2EXT);
+		GPIO_Pin_Init(GPIOB, 10, MODE.Alternate_Function, Output_Type.Push_Pull, Speed.Very_High_Speed, Pull.No_Pull_Up_Down, Alternate_Functions.I2S_2);
 	}
 	else if((config->Full_Duplex.SCK_Pin == I2S_Pin.SCK.I2S2.PB13) || (config->Half_Duplex.SCK_Pin == I2S_Pin.SCK.I2S2.PB13)){
-		GPIO_Pin_Init(GPIOB, 13, MODE.Alternate_Function, Output_Type.Push_Pull, Speed.Very_High_Speed, Pull.Pull_Down, Alternate_Functions.I2S_2EXT);
+		GPIO_Pin_Init(GPIOB, 13, MODE.Alternate_Function, Output_Type.Push_Pull, Speed.Very_High_Speed, Pull.No_Pull_Up_Down, Alternate_Functions.I2S_2);
 	}
 	else{
 		config->Error.SCK_Pin_Error = true;
@@ -72,10 +72,10 @@ static int8_t SCK_PIN_INIT2(I2S_Config *config)
 static int8_t WS_PIN_INIT2(I2S_Config *config)
 {
 	if((config->Full_Duplex.WS_Pin == I2S_Pin.WS.I2S2.PB09) || (config->Half_Duplex.WS_Pin == I2S_Pin.WS.I2S2.PB09)){
-		GPIO_Pin_Init(GPIOB, 9, MODE.Alternate_Function, Output_Type.Push_Pull, Speed.Very_High_Speed, Pull.No_Pull_Up_Down, Alternate_Functions.I2S_2EXT);
+		GPIO_Pin_Init(GPIOB, 9, MODE.Alternate_Function, Output_Type.Push_Pull, Speed.Very_High_Speed, Pull.No_Pull_Up_Down, Alternate_Functions.I2S_2);
 	}
 	else if((config->Full_Duplex.WS_Pin == I2S_Pin.WS.I2S2.PB12) || (config->Half_Duplex.WS_Pin == I2S_Pin.WS.I2S2.PB12)){
-		GPIO_Pin_Init(GPIOB, 12, MODE.Alternate_Function, Output_Type.Push_Pull, Speed.Very_High_Speed, Pull.No_Pull_Up_Down, Alternate_Functions.I2S_2EXT);
+		GPIO_Pin_Init(GPIOB, 12, MODE.Alternate_Function, Output_Type.Push_Pull, Speed.Very_High_Speed, Pull.No_Pull_Up_Down, Alternate_Functions.I2S_2);
 	}
 	else{
 		config->Error.WS_Pin_Error = true;
@@ -86,10 +86,10 @@ static int8_t WS_PIN_INIT2(I2S_Config *config)
 static int8_t SD_PIN_Init2(I2S_Config *config)
 {
 	if((config->Full_Duplex.SD_Pin == I2S_Pin.SD.I2S2.PB15) || (config->Half_Duplex.SD_Pin == I2S_Pin.SD.I2S2.PB15)){
-		GPIO_Pin_Init(GPIOB, 15, MODE.Alternate_Function, Output_Type.Push_Pull, Speed.Very_High_Speed, Pull.Pull_Down, Alternate_Functions.I2S_2EXT);
+		GPIO_Pin_Init(GPIOB, 15, MODE.Alternate_Function, Output_Type.Push_Pull, Speed.Very_High_Speed, Pull.Pull_Down, Alternate_Functions.I2S_2);
 	}
 	else if((config->Full_Duplex.SD_Pin == I2S_Pin.SD.I2S2.PC03) || (config->Half_Duplex.SD_Pin == I2S_Pin.SD.I2S2.PC03)){
-		GPIO_Pin_Init(GPIOC, 3, MODE.Alternate_Function, Output_Type.Push_Pull, Speed.Very_High_Speed, Pull.Pull_Down, Alternate_Functions.I2S_2EXT);
+		GPIO_Pin_Init(GPIOC, 3, MODE.Alternate_Function, Output_Type.Push_Pull, Speed.Very_High_Speed, Pull.Pull_Down, Alternate_Functions.I2S_2);
 	}
 	else{
 		config->Error.SD_Pin_Error = true;
@@ -114,10 +114,10 @@ static int8_t MCK_PIN_Init2(I2S_Config *config)
 static int8_t EXT_SD_PIN_Init2(I2S_Config *config)
 {
 	if((config->Full_Duplex.EXT_SD == I2S_Pin.EXT_SD.I2S2.PB14)){
-		GPIO_Pin_Init(GPIOB, 14, MODE.Alternate_Function, Output_Type.Push_Pull, Speed.Very_High_Speed, Pull.No_Pull_Up_Down, Alternate_Functions.I2S_2EXT);
+		GPIO_Pin_Init(GPIOB, 14, MODE.Alternate_Function, Output_Type.Push_Pull, Speed.Very_High_Speed, Pull.No_Pull_Up_Down, Alternate_Functions.I2S_2);
 	}
 	else if(config->Full_Duplex.EXT_SD == I2S_Pin.EXT_SD.I2S2.PC02){
-		GPIO_Pin_Init(GPIOC, 2, MODE.Alternate_Function, Output_Type.Push_Pull, Speed.Very_High_Speed, Pull.No_Pull_Up_Down, Alternate_Functions.I2S_2EXT);
+		GPIO_Pin_Init(GPIOC, 2, MODE.Alternate_Function, Output_Type.Push_Pull, Speed.Very_High_Speed, Pull.No_Pull_Up_Down, Alternate_Functions.I2S_2);
 	}
 	else{
 		config->Error.Ext_SD_Pin_Error = true;
@@ -309,6 +309,18 @@ int8_t I2S_Init(I2S_Config *config)
 		config->Error.Standard_Error  = true;
 	}
 
+
+
+
+	config->Port->I2SCFGR &= ~SPI_I2SCFGR_CHLEN;
+	if(config->Channel_Length == I2S_Channel_Length._16_bit){
+		config->Port->I2SCFGR &= ~SPI_I2SCFGR_CHLEN;
+	}else if(config->Channel_Length == I2S_Channel_Length._32_bit){
+		config->Port->I2SCFGR |=  SPI_I2SCFGR_CHLEN;
+	}else{
+		config->Error.Channel_Length_Error = true;
+	}
+
 	// Data Length
 	config->Port->I2SCFGR &= ~SPI_I2SCFGR_DATLEN;
 	if(config->Data_Length == I2S_Data_Length._16_bit){
@@ -319,16 +331,6 @@ int8_t I2S_Init(I2S_Config *config)
 		config->Port->I2SCFGR |= SPI_I2SCFGR_DATLEN_1;
 	}else{
 		config->Error.Data_Len_Error = true;
-	}
-
-
-	config->Port->I2SCFGR &= ~SPI_I2SCFGR_CHLEN;
-	if(config->Channel_Length == I2S_Channel_Length._16_bit){
-		config->Port->I2SCFGR &= ~SPI_I2SCFGR_CHLEN;
-	}else if(config->Channel_Length == I2S_Channel_Length._32_bit){
-		config->Port->I2SCFGR |=  SPI_I2SCFGR_CHLEN;
-	}else{
-		config->Error.Channel_Length_Error = true;
 	}
 
 
@@ -398,12 +400,8 @@ int8_t I2S_Init(I2S_Config *config)
 		}
 		else if(config->Channel_Length == I2S_Channel_Length._32_bit)
 		{
-			plli2s_n = 80;
-			plli2s_r = 4;
-			RCC -> PLLI2SCFGR = (plli2s_n << 6) | (plli2s_r << 28);
-			RCC -> CR |= RCC_CR_PLLI2SON;
-			while(!(RCC -> CR & RCC_CR_PLLI2SRDY));
-			config->Port->I2SPR = (6);
+
+			config->Port->I2SPR = (12);
 			config->Port->I2SPR |= SPI_I2SPR_ODD;
 		}
 	}else if(config->Audio_Frequency == I2S_Audio_Frequency._64000Hz)
@@ -419,8 +417,11 @@ int8_t I2S_Init(I2S_Config *config)
 		}
 		else if(config->Channel_Length == I2S_Channel_Length._32_bit)
 		{
+			uint32_t RCC_PLLI2SCFGR = 0;
 			plli2s_n = 128;
 			plli2s_r = 5;
+			RCC_PLLI2SCFGR = plli2s_n << 6;
+			RCC_PLLI2SCFGR |= plli2s_r << 28;
 			RCC -> PLLI2SCFGR = (plli2s_n << 6) | (plli2s_r << 28);
 			RCC -> CR |= RCC_CR_PLLI2SON;
 			while(!(RCC -> CR & RCC_CR_PLLI2SRDY));
@@ -433,6 +434,7 @@ int8_t I2S_Init(I2S_Config *config)
 	}else if(config->Audio_Frequency == I2S_Audio_Frequency._96000Hz)
 	{
 		//
+
 		  plli2s_n = 192;
 		  plli2s_r = 5;
 		RCC -> PLLI2SCFGR = (plli2s_n << 6) | (plli2s_r << 28);
@@ -452,6 +454,8 @@ int8_t I2S_Init(I2S_Config *config)
 	}
 
 	//  I2S Enable
+
+
 	I2S_Start(config);
 
 //	I2S_Mode_Set(config);
@@ -669,26 +673,51 @@ int8_t I2S_Mode_Set(I2S_Config *config)
 }
 
 
-void I2S_Read_Data(I2S_Config *config, int32_t *data)
+int16_t I2S_Read_Data(I2S_Config *config)
 {
-	int32_t retval[2];
 	if(config->Data_Length == I2S_Data_Length._16_bit)
 	{
 		while((config -> Port -> SR & SPI_SR_CHSIDE) != SPI_SR_CHSIDE){}
-		retval[0] = config -> Port -> DR;
-		retval[1] =   config -> Port -> DR;
-		*data =  ((retval[1] << 16) | retval[0]);
+		return(int16_t)(config -> Port -> DR);
 	}
-	else if((config->Data_Length == I2S_Channel_Length._32_bit) || (config->Data_Length == I2S_Data_Length._24_bit))
-	{
+
+//	while(config->Data_Length == I2S_Data_Length._16_bit){}
+//	return(int16_t)(config -> Port -> DR);
+
+//	uint16_t retval[2];
+//	if(config->Data_Length == I2S_Data_Length._16_bit)
+//	{
+//		if((config -> Port -> SR & SPI_SR_CHSIDE) != SPI_SR_CHSIDE)
+//		{
+//	uint16_t hh = config -> Port -> SR;
+//			*x = (uint16_t)(config -> Port -> DR);
+//			*x = (uint16_t)(config -> Port -> DR);
+//		}
+//		else if((config -> Port -> SR & SPI_SR_CHSIDE) == SPI_SR_CHSIDE)
+//		{
+//			*y = (uint16_t)(config -> Port -> DR);
+//			*y = (uint16_t)(config -> Port -> DR);
+//		}
+//		while((config -> Port -> SR & SPI_SR_CHSIDE) != SPI_SR_CHSIDE){}
+//		retval[0] = config -> Port -> DR;
+//		while((config -> Port -> SR & SPI_SR_CHSIDE) != SPI_SR_CHSIDE){}
+//		retval[1] = config -> Port -> DR;
+//		return retval[1];
+
+////		retval[1] =   config -> Port -> DR;
+//		*data = retval[0];
+//	}
+//	else if((config->Data_Length == I2S_Channel_Length._32_bit) || (config->Data_Length == I2S_Data_Length._24_bit))
+//	{
 //		while(!(config -> Port -> SR & SPI_SR_CHSIDE)){}
-		while((config -> Port -> SR & SPI_SR_CHSIDE) == SPI_SR_CHSIDE){}
-		retval[0] = config -> Port -> DR;
 //		while((config -> Port -> SR & SPI_SR_CHSIDE) == SPI_SR_CHSIDE){}
-//		retval[1] =   config -> Port -> DR;
-//		*data =  ((retval[0] << 16) | retval[1]);
-		*data = retval[0];
-	}
+//		retval[0] = config -> Port -> DR;
+//		retval[1] = config -> Port -> DR;
+////		while((config -> Port -> SR & SPI_SR_CHSIDE) == SPI_SR_CHSIDE){}
+////		retval[1] =   config -> Port -> DR;
+////		*data =  ((retval[0] << 16) | retval[1]);
+//		*data = retval[0] << 16 | retval[1];
+//	}
 }
 
 void I2S_Select_Left_Channel(I2S_Config *config)
