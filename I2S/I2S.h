@@ -97,7 +97,7 @@ void I2S_Stop(I2S_Config *config); ///< Function for stopping I2S.
 void I2S_Select_Left_Channel(I2S_Config *config); ///< Function for selecting left channel in I2S.
 void I2S_Select_Right_Channel(I2S_Config *config); ///< Function for selecting right channel in I2S.
 
-void I2S_Read_Data(I2S_Config *config, int32_t *data); ///< Function for reading data from I2S.
+int16_t I2S_Read_Data(I2S_Config *config); ///< Function for reading data from I2S.
 void I2S_Write_Data(I2S_Config *config, uint32_t data, int len); ///< Function for writing data to I2S.
 
 #endif /* I2S_H_ */
